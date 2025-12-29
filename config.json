@@ -1,0 +1,21 @@
+{
+  "sensitivity": 1.5,
+  "smoothing": true,
+  "toggle_key": "f8",
+  "target_window": "Roblox",
+  "key_mappings": {
+    "space": "a",
+    "e": "x",
+    "r": "y",
+    "q": "b",
+    "shift": "lb",
+    "ctrl": "rb",
+    "c": "ls",
+    "f": "rs",
+    "tab": "back",
+    "1": "dpad_up",
+    "2": "dpad_down",
+    "3": "dpad_left",
+    "4": "dpad_right"
+  }
+}
