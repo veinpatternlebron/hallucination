@@ -26,6 +26,11 @@ class InputHandler:
         self.window_manager = window_manager
         self.config = config
         
+        # Constants
+        self.UPDATE_RATE_HZ = 120
+        self.SMOOTHING_DECAY_FACTOR = 0.7
+        self.MOUSE_SENSITIVITY_SCALE = 0.01
+        
         # Mouse state
         self.mouse_dx = 0.0
         self.mouse_dy = 0.0
@@ -110,14 +115,16 @@ class InputHandler:
     def _on_mouse_move(self, x, y):
         """
         Mouse movement callback.
-        Accumulates mouse delta for processing in update loop.
+        
+        Note: This callback receives absolute positions but we need delta values.
+        Mouse delta calculation is handled in the _update_loop method where
+        we track position changes between frames for more accurate control.
         
         Args:
             x: Absolute X position
             y: Absolute Y position
         """
-        # pynput gives us absolute position, but we need delta
-        # We'll use a different approach in the update loop
+        # Intentionally empty - delta calculation in _update_loop
         pass
 
     def _on_mouse_click(self, x, y, button, pressed):
@@ -245,11 +252,11 @@ class InputHandler:
                 # Send all updates to controller
                 self.controller.update()
                 
-                # Sleep for 120Hz update rate
-                time.sleep(1.0 / 120.0)
+                # Sleep for configured update rate
+                time.sleep(1.0 / self.UPDATE_RATE_HZ)
             except Exception as e:
                 print(f"⚠️  Error in update loop: {e}")
-                time.sleep(1.0 / 120.0)
+                time.sleep(1.0 / self.UPDATE_RATE_HZ)
 
     def _update_movement_stick(self):
         """
@@ -289,16 +296,16 @@ class InputHandler:
             
             if self.smoothing:
                 # Apply decay for smoothing
-                self.mouse_dx *= 0.7
-                self.mouse_dy *= 0.7
+                self.mouse_dx *= self.SMOOTHING_DECAY_FACTOR
+                self.mouse_dy *= self.SMOOTHING_DECAY_FACTOR
             else:
                 # Reset delta after reading
                 self.mouse_dx = 0.0
                 self.mouse_dy = 0.0
         
         # Apply sensitivity
-        x = dx * self.sensitivity * 0.01
-        y = dy * self.sensitivity * 0.01
+        x = dx * self.sensitivity * self.MOUSE_SENSITIVITY_SCALE
+        y = dy * self.sensitivity * self.MOUSE_SENSITIVITY_SCALE
         
         # Invert Y for FPS controls
         y = -y

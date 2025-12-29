@@ -24,7 +24,7 @@ class WindowManager:
         self.target_window_name = target_window_name
         self._last_check_time = 0
         self._last_check_result = False
-        self._check_interval = 0.5  # Check every 0.5 seconds
+        self.WINDOW_CHECK_INTERVAL = 0.5  # Check every 0.5 seconds
         
         if gw is None:
             print("⚠️  Warning: pygetwindow not available, window locking disabled")
@@ -43,7 +43,7 @@ class WindowManager:
         current_time = time.time()
         
         # Use cached result if within check interval
-        if current_time - self._last_check_time < self._check_interval:
+        if current_time - self._last_check_time < self.WINDOW_CHECK_INTERVAL:
             return self._last_check_result
         
         # Perform actual check
